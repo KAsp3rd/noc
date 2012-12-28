@@ -1,0 +1,155 @@
+<head>
+<title>Auto Login</title>
+<HTA:APPLICATION 
+     APPLICATIONNAME="Automagical Login"
+     SCROLL="no"
+     SINGLEINSTANCE="yes"
+	 innerBorder="no"
+	 border="thin"
+	 maximizeButton="no"
+	 minimizeButton="yes"
+	 version ="RC 1" 
+	 >
+
+</head>
+   
+  <script language="VBScript">
+  
+    Sub check
+      Set WSHShell = CreateObject("WScript.Shell")
+      Set FSO = CreateObject("Scripting.FilesystemObject")
+	  If Passwd.value = "" Then
+	    msgbox "Please Enter your password in the space provided.", 48, "Error"
+        Exit Sub
+      End If
+
+	  strIP = ipaddress.value
+      aIP = Split(strIP, ".")
+        If Ubound(aIP) = 3 then
+	      boolIsValid = True
+            For each x in aIP
+	          If not isNumeric(x) then
+		        boolIsValid = False
+		          Message(wrong_ip)
+		          Exit Sub
+		      End If
+	        Next
+
+		    For each x in aIP
+	          If x < 0 Or x > 255 Then
+                boolIsValid = False
+		        Message(wrong_ip)
+                Exit Sub
+		      End If
+	        Next
+	    Else
+	      boolIsValid = False
+	    End If
+
+		If boolIsValid = False Then
+          Message(wrong_ip)
+          Exit sub
+        End IF
+
+      Set WSHShell = Nothing
+      Set FSO = Nothing
+
+	  If OptionChooser.Value ="1" Then
+	    init_telnet
+	  ElseIf OptionChooser.Value ="2" Then
+	    init_ssh
+	  End If
+    End Sub
+
+    Sub Window_onLoad
+      window.resizeTo 245,210
+	  dim filesys
+	  Const ForReading = 1
+	  Set filesys = CreateObject("Scripting.FileSystemObject")
+	  If not filesys.FileExists("C:\PROGRA~1\PuTTY\putty.exe") Then
+	    msgBox"PuTTY is not installed on your Computer. Please Install PuTTY from Control Panel, Run Advertised Programs", 48, "Error"
+		close.window
+		End If
+    End Sub
+
+
+    Sub Message(wrong_ip)
+      MsgBox " "&ipaddress.value&" is not a valid IP Address. Please Try again.", 48, "Error"
+	  Exit Sub
+    End sub
+
+    Sub init_telnet
+      Dim objNetwork
+      Set objNetwork = CreateObject("WScript.Network")
+      Set oshell = CreateObject("Wscript.shell") 
+      oshell.run "C:\PROGRA~1\PuTTY\putty.exe -telnet "&ipaddress.value&""
+      oshell.AppActivate(""&ipaddress.value&" - PuTTY")
+	  Delay
+    End Sub
+	
+	Sub end_telnet
+	  Set objNetwork = CreateObject("WScript.Network")
+	  Set oshell = CreateObject("Wscript.shell")
+	  oshell.AppActivate(""&ipaddress.value&" - PuTTY")
+	  oshell.AppActivate(""&ipaddress.value&" - PuTTY")
+	  oshell.sendkeys""&objNetwork.UserName&""
+	  oshell.sendkeys"{ENTER}"
+	  oshell.AppActivate(""&ipaddress.value&" - PuTTY")
+	  oshell.AppActivate(""&ipaddress.value&" - PuTTY")
+	  oshell.sendkeys""&Passwd.value&""
+	  oshell.AppActivate(""&ipaddress.value&" - PuTTY")
+	  oshell.AppActivate(""&ipaddress.value&" - PuTTY")
+	  oshell.sendkeys"{ENTER}"
+      Exit Sub
+	End Sub
+
+	Sub init_ssh
+	  Dim objNetwork
+	  Set objNetwork = CreateObject("WScript.Network")
+	  Set oshell = CreateObject("Wscript.shell")
+	  oshell.run "C:\PROGRA~1\PuTTY\putty.exe -ssh "&objNetwork.UserName&"@"&ipaddress.value&" -pw "&Passwd.value&""
+	  Delay
+	End Sub
+	
+	Sub end_ssh
+	  Set oshell = CreateObject("Wscript.shell")
+      oshell.AppActivate(""&ipaddress.value&" - PuTTY")
+	  Exit Sub
+	End Sub
+
+	
+    Sub Delay
+	  idTimer = window.setTimeout("PausedSection", 5000, "VBScript")
+	  Exit Sub
+	End Sub
+	
+	Sub PausedSection
+	  end_it
+	  'Exit Sub
+	End Sub
+
+    Sub end_it
+	  If OptionChooser.Value ="1" Then
+	      end_telnet
+		  Exit Sub
+	  ElseIf OptionChooser.Value ="2" Then
+	      end_ssh
+		  Exit Sub
+      End If
+	End Sub
+	
+  </script>
+
+<body>
+<body bgcolor=#0174DF>
+IP Address to connect to<BR>
+<input type="text" value="xxx.xxx.xxx.xxx" name="ipaddress" size="30"><BR>
+Active Directory Password<BR>
+<input type="password" name="Passwd" size="30"> <BR>
+<div style="position:relative;left:0px;top:5px;"><select size="1" name="OptionChooser">
+<option value="1">Telnet</option>
+<option value="2">SSH</option>
+</select><P>
+<div style="position:relative;left:0px;top:-5px;"><input type="button" value="Run Putty" name="run_button" onClick="check">
+<div style="position:relative;left:155px;top:-10px;">KAsp3rd<BR>
+</body>
