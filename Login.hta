@@ -8,7 +8,7 @@
 	 border="thin"
 	 maximizeButton="no"
 	 minimizeButton="yes"
-	 version ="1.0"
+	 version ="1.2"
 	 >
 
 </head>
@@ -19,6 +19,7 @@
 	dim oshell
 	dim objFSO
 	dim objNetwork
+	dim sshpass
 
 	Set objFSO = CreateObject("Scripting.FileSystemObject")
 	Set oshell = CreateObject("Wscript.shell")
@@ -40,11 +41,25 @@
 	End Sub
 
     Sub check
+	sshpass = Passwd.value
 		If Passwd.value = "" Then
 			msgbox "Please Enter your password in the space provided.", 48, "Error"
 			Exit Sub
 		End If
 
+	'replace characters that SendKeys uses as events with absolute characters
+	If InStr(Passwd.value,"^")>0 Then
+		Passwd.value=(Replace(Passwd.value,"^","{^}"))
+	End If
+	If InStr(Passwd.value,"~")>0 Then
+	    Passwd.value=(Replace(Passwd.value,"~","{~}"))
+        End If
+	If InStr(Passwd.value,"+")>0 Then
+	    Passwd.value=(Replace(Passwd.value,"+","{+}"))
+        End If
+	If InStr(Passwd.value,"%")>0 Then
+	    Passwd.value=(Replace(Passwd.value,"%","{%}"))
+        End If
 		strIP = Trim(ipaddress.value)
 		aIP = Split(strIP, ".")
         If Ubound(aIP) = 3 then
@@ -136,7 +151,7 @@
 	End Sub
 
 	Sub init_ssh
-		oshell.run "C:\PROGRA~1\PuTTY\putty.exe -ssh "&objNetwork.UserName&"@"&ipaddress.value&" -pw "&Passwd.value&""
+		oshell.run "C:\PROGRA~1\PuTTY\putty.exe -ssh "&objNetwork.UserName&"@"&ipaddress.value&" -pw "&sshpass&""
 		Delay
 	End Sub
 	
@@ -172,11 +187,11 @@
 IP Address to connect to<BR>
 <input type="text" onkeypress=enter onClick=cleartxt value="xxx.xxx.xxx.xxx" name="ipaddress" size="30"><BR>
 Active Directory Password<BR>
-<input type="password" name="Passwd" size="30"> <BR>
-<div style="position:relative;left:0px;top:5px;"><select size="1" name="OptionChooser">
+<input type="password" onkeypress=enter name="Passwd" size="30"> <BR>
+<div style="position:relative;left:0px;top:5px;"><select size="1" onkeypress=enter name="OptionChooser">
 <option value="1">Telnet</option>
 <option value="2">SSH</option>
 </select><P>
 <div style="position:relative;left:0px;top:-5px;"><input type="button" value="Run Putty" name="run_button" onClick="check">
-<div style="position:relative;left:155px;top:-10px;">© KAsp3rd<BR>
+<div style="position:relative;left:155px;top:-10px;">Â© KAsp3rd<BR>
 </body>
