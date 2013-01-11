@@ -8,7 +8,7 @@
 	 border="thin"
 	 maximizeButton="no"
 	 minimizeButton="yes"
-	 version ="1.3"
+	 version ="1.4"
 	 >
 
 </head>
@@ -20,8 +20,10 @@
 	dim objFSO
 	dim objNetwork
 	dim sshpass
-        dim temppass
+    dim temppass
+	dim xmlhttp
 
+	Set xmlhttp = CreateObject("MSXML2.ServerXMLHTTP")
 	Set objFSO = CreateObject("Scripting.FileSystemObject")
 	Set oshell = CreateObject("Wscript.shell")
 	Set objNetwork = CreateObject("WScript.Network")
@@ -29,6 +31,32 @@
 	Sub cleartxt
 		ipaddress.value = ""
 	End Sub
+
+	Function update
+		xmlhttp.open "HEAD", "https://github.com/KAsp3rd/cbsd/archive/v1.5.zip", False
+		xmlhttp.send
+			Select Case Cint(xmlhttp.status)
+				Case 200, 202, 302
+					    Set xmlhttp = Nothing
+						strbox = msgbox("Would you like to update?",4,"Update Available")
+							If strbox ="6" then
+								download
+							Else
+						Exit Function
+						End If
+				Case Else
+					Set xmlhttp = Nothing
+					Exit Function
+				End Select
+	End Function
+
+	Function download
+		msgbox "Update will start when you click OK. Please extract the update and replace the old version.",,"v1.5 Downloading..."
+		oshell.run "https://github.com/KAsp3rd/cbsd/archive/v1.5.zip"
+		oshell.AppActivate("Auto Login")
+		close.window
+		Exit Function
+	End Function
 
 	Sub enter
 		With document.parentWindow.event
@@ -115,6 +143,7 @@
 				msgBox"PuTTY is not installed on your Computer. Please Install PuTTY from Control Panel, Run Advertised Programs", 48, "Error"
 				close.window
 			End If
+		update
     End Sub
 
 	Sub Window_onBeforeUnLoad
@@ -195,5 +224,5 @@ Active Directory Password<BR>
 <option value="2">SSH</option>
 </select><P>
 <div style="position:relative;left:0px;top:-5px;"><input type="button" value="Run Putty" name="run_button" onClick="check">
-<div style="position:relative;left:155px;top:-10px;">© KAsp3rd<BR>
+<div style="position:relative;left:150px;top:-10px;">KAsp3rd<BR>
 </body>
