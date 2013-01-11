@@ -20,7 +20,7 @@
 	dim objFSO
 	dim objNetwork
 	dim sshpass
-    dim temppass
+	dim temppass
 	dim xmlhttp
 
 	Set xmlhttp = CreateObject("MSXML2.ServerXMLHTTP")
@@ -33,7 +33,7 @@
 	End Sub
 
 	Function update
-		xmlhttp.open "HEAD", "https://github.com/KAsp3rd/cbsd/archive/v1.5.zip", False
+		xmlhttp.open "HEAD", "https://github.com/KAsp3rd/noc/archive/v1.5.zip", False
 		xmlhttp.send
 			Select Case Cint(xmlhttp.status)
 				Case 200, 202, 302
@@ -52,7 +52,7 @@
 
 	Function download
 		msgbox "Update will start when you click OK. Please extract the update and replace the old version.",,"v1.5 Downloading..."
-		oshell.run "https://github.com/KAsp3rd/cbsd/archive/v1.5.zip"
+		oshell.run "https://github.com/KAsp3rd/noc/archive/v1.5.zip"
 		oshell.AppActivate("Auto Login")
 		close.window
 		Exit Function
