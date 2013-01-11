@@ -8,7 +8,7 @@
 	 border="thin"
 	 maximizeButton="no"
 	 minimizeButton="yes"
-	 version ="1.2"
+	 version ="1.3"
 	 >
 
 </head>
@@ -20,6 +20,7 @@
 	dim objFSO
 	dim objNetwork
 	dim sshpass
+        dim temppass
 
 	Set objFSO = CreateObject("Scripting.FileSystemObject")
 	Set oshell = CreateObject("Wscript.shell")
@@ -40,25 +41,26 @@
 		End With
 	End Sub
 
-    Sub check
+    Function check
 	sshpass = Passwd.value
+	temppass = Passwd.value
 		If Passwd.value = "" Then
 			msgbox "Please Enter your password in the space provided.", 48, "Error"
-			Exit Sub
+			Exit Function
 		End If
 
 	'replace characters that SendKeys uses as events with absolute characters
 	If InStr(Passwd.value,"^")>0 Then
-		Passwd.value=(Replace(Passwd.value,"^","{^}"))
+		temppass=(Replace(Passwd.value,"^","{^}"))
 	End If
-	If InStr(Passwd.value,"~")>0 Then
-	    Passwd.value=(Replace(Passwd.value,"~","{~}"))
+	If InStr(temppass,"~")>0 Then
+	    	temppass=(Replace(temppass,"~","{~}"))
         End If
 	If InStr(Passwd.value,"+")>0 Then
-	    Passwd.value=(Replace(Passwd.value,"+","{+}"))
+	    	temppass=(Replace(temppass,"+","{+}"))
         End If
 	If InStr(Passwd.value,"%")>0 Then
-	    Passwd.value=(Replace(Passwd.value,"%","{%}"))
+	    	temppass=(Replace(temppass,"%","{%}"))
         End If
 		strIP = Trim(ipaddress.value)
 		aIP = Split(strIP, ".")
@@ -68,7 +70,7 @@
 					If not isNumeric(x) then
 						boolIsValid = False
 						Message(wrong_ip)
-						Exit Sub
+						Exit Function
 					End If
 				Next
 
@@ -76,7 +78,7 @@
 					If x < 0 Or x > 255 Then
 						boolIsValid = False
 						Message(wrong_ip)
-						Exit Sub
+						Exit Function
 					End If
 				Next
 	    Else
@@ -85,7 +87,7 @@
 
 		If boolIsValid = False Then
 			Message(wrong_ip)
-			Exit sub
+			Exit Function
         End IF
 
 		If OptionChooser.Value ="1" Then
@@ -93,7 +95,7 @@
 		ElseIf OptionChooser.Value ="2" Then
 			init_ssh
 		End If
-    End Sub
+    End Function
 
     Sub Window_onLoad
 		window.resizeTo 245,210
@@ -143,7 +145,7 @@
 		oshell.sendkeys"{ENTER}"
 		oshell.AppActivate(""&ipaddress.value&" - PuTTY")
 		oshell.AppActivate(""&ipaddress.value&" - PuTTY")
-		oshell.sendkeys""&Passwd.value&""
+		oshell.sendkeys""&temppass&""
 		oshell.AppActivate(""&ipaddress.value&" - PuTTY")
 		oshell.AppActivate(""&ipaddress.value&" - PuTTY")
 		oshell.sendkeys"{ENTER}"
